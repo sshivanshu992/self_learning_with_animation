@@ -76,3 +76,55 @@ extension UIView {
         gradientLayer.add(animation, forKey: "colorFillAnimation")
     }
 }
+
+/// Enabled the zooming
+extension UIView {
+    func enableZoomForImageView(imageView: UIImageView) {
+        /// Create a UIScrollView
+        let scrollView = UIScrollView()
+        scrollView.delegate = self
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 4.0
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        /// Add UIScrollView to the UIView
+        self.addSubview(scrollView)
+        
+        /// Add constraints to UIScrollView to fill the parent view
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: self.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: self.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        ])
+        
+        /// Add UIImageView to the UIScrollView
+        imageView.contentMode = .scaleToFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(imageView)
+        
+        /// Add constraints to UIImageView
+        NSLayoutConstraint.activate([
+            imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            imageView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            imageView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            imageView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        ])
+        
+        /// Set the content size of the UIScrollView based on the UIImageView's size
+        scrollView.contentSize = imageView.frame.size
+    }
+}
+
+/// Extend the class where you want to add zooming functionality to adopt UIScrollViewDelegate
+extension UIView: UIScrollViewDelegate {
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        /// Return the UIImageView for zooming
+        if let imageView = scrollView.subviews.first as? UIImageView {
+            return imageView
+        }
+        return nil
+    }
+}
